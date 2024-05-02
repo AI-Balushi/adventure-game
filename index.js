@@ -8,66 +8,63 @@ class Player {
         this.name = name;
     }
     fuelDecrease() {
-        let fuel = this.fuel - 25;
-        this.fuel = fuel;
+        this.fuel -= 25;
     }
     fuelIncrease() {
         this.fuel = 100;
     }
 }
-class Opponent {
-    name;
-    fuel = 100;
-    constructor(name) {
-        this.name = name;
-    }
-    fuelDecrease() {
-        let fuel = this.fuel - 25;
-        this.fuel = fuel;
-    }
-}
 // Asked Player name & Opponent Select
-let player = await inquirer.prompt({
-    type: "input",
-    name: "name",
-    message: "Please Enter Your Name:"
-});
-let opponent = await inquirer.prompt({
-    type: "list",
-    name: "select",
-    message: "Select Your Oppenent",
-    choices: ["Skeleton", "Assassin", "Zombie"]
-});
-// Gather Data
-let p1 = new Player(player.name);
-let o1 = new Player(opponent.select);
-do {
-    if (opponent.select == "Skeleton") {
-        // console.log(`${chalk.bold.green(p1.name)} VS ${chalk.bold.red(o1.name)}`);
+async function startGame() {
+    let player = await inquirer.prompt({
+        type: "input",
+        name: "name",
+        message: "Please Enter Your Name:"
+    });
+    let opponent = await inquirer.prompt({
+        type: "list",
+        name: "select",
+        message: "Select Your Opponent",
+        choices: ["Skeleton", "Assassin", "Zombie"]
+    });
+    let p1 = new Player(player.name);
+    let o1 = new Player(opponent.select);
+    do {
         let ask = await inquirer.prompt({
             type: "list",
             name: "opt",
-            message: "Select Your Opponent",
-            choices: ["Attack", "Drink Portion", "Run for your life.."]
+            message: "Select Your Move:",
+            choices: ["Attack", "Drink Potion", "Run for your life.."]
         });
         if (ask.opt == "Attack") {
             let num = Math.floor(Math.random() * 2);
             if (num > 0) {
                 p1.fuelDecrease();
-                console.log(chalk.bold.red(`${p1.name} fuel is ${p1.fuel}`));
-                console.log(chalk.bold.green(`${o1.name} fuel is ${o1.fuel}`));
+                console.log(chalk.red.bold(`${p1.name} fuel is ${p1.fuel}`));
+                console.log(chalk.green.bold(`${o1.name} fuel is ${o1.fuel}`));
+                if (p1.fuel <= 0) {
+                    console.log(chalk.red.bold.italic("You Lose, Better Luck Next Time"));
+                    process.exit();
+                }
             }
-            if (num <= 0) {
+            else {
                 o1.fuelDecrease();
-                console.log(chalk.bold.green(`${p1.name} fuel is ${p1.fuel}`));
-                console.log(chalk.bold.red(`${o1.name} fuel is ${o1.fuel}`));
+                console.log(chalk.green.bold(`${p1.name} fuel is ${p1.fuel}`));
+                console.log(chalk.red.bold(`${o1.name} fuel is ${o1.fuel}`));
+                if (o1.fuel <= 0) {
+                    console.log(chalk.green.bold.italic("You Win"));
+                    process.exit();
+                }
             }
         }
-        if (ask.opt == "Drink Portion") {
+        if (ask.opt == "Drink Potion") {
             p1.fuelIncrease();
+            console.log(chalk.green.bold(`You Drink Health Potion. Your Fuel is ${p1.fuel}`));
         }
         if (ask.opt == "Run for your life..") {
-            console.log(chalk.red.bold.italic("You Loose, Better Luck Next Time"));
+            console.log(chalk.red.bold.italic("You Lose, Better Luck Next Time"));
+            process.exit();
         }
-    }
-} while (true);
+    } while (true);
+}
+startGame();
