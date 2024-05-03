@@ -1,5 +1,5 @@
 {
-  "name": "@abdul_waheed/adventure-game",
+  "name":"@abdul_waheed/adventure-game",
   "version": "2.0.2",
   "description": "Adventure Game CLI Based",
   "main": "index.js",
